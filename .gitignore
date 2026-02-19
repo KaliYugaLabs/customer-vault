@@ -1,9 +1,23 @@
 # local environment variables
 .env
 
+# API keys document (local only)
+API_KEYS.md
+
 # dependencies
-/node_modules
+node_modules/
+
+# Angular cache
+.angular/
+
+# Build output
+dist/
 
 # System Files
 .DS_Store
 Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo

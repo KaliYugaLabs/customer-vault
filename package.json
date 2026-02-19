@@ -1,26 +1,40 @@
 {
-  "name": "ng-node-firebase",
-  "version": "1.0.0",
-  "main": "server.js",
+  "name": "customer-manager",
+  "version": "2.0.0",
+  "description": "Modern customer management app with Angular 19 and Firebase",
+  "main": "index.js",
   "engines": {
-    "node": "^6.9.x"
+    "node": ">=20.0.0"
   },
   "scripts": {
-    "preinstall:backend": "cd backend && npm install",
-    "preinstall:frontend": "cd frontend && npm install",
-    "preinstall": "npm run preinstall:backend && npm run preinstall:frontend",
-    "start": "node server.js"
+    "setup": "bash scripts/setup.sh",
+    "install:frontend": "cd frontend-v2 && npm install",
+    "install:backend": "cd backend-v2 && npm install",
+    "install:all": "npm install && npm run install:frontend",
+    "start": "cd frontend-v2 && npm start",
+    "start:frontend": "cd frontend-v2 && npm start",
+    "start:backend": "cd backend-v2 && npm run dev",
+    "build": "cd frontend-v2 && npm run build",
+    "build:prod": "cd frontend-v2 && npm run build -- --configuration production",
+    "test": "cd frontend-v2 && npm test",
+    "lint": "cd frontend-v2 && npm run lint",
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "deploy:indexes": "firebase deploy --only firestore:indexes",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "deploy:all": "firebase deploy",
+    "emulators": "firebase emulators:start"
   },
+  "keywords": [
+    "angular",
+    "firebase",
+    "customer-management",
+    "firestore",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rikusv/ng-node-firebase.git"
-  },
-  "author": "rikusv@gmail.com",
-  "license": "MIT",
-  "homepage": "https://github.com/rikusv/ng-node-firebase#readme",
-  "description": "",
-  "dependencies": {
-    "dotenv": "^4.0.0",
-    "express": "^4.15.3"
+    "url": "https://github.com/rikusv/ng-node-firebase.git"
   }
 }

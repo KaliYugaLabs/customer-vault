@@ -1,176 +1,298 @@
-# ng-node-firebase
+<p align="center">
+  <h1 align="center">🏢 Customer Manager</h1>
+  <p align="center">
+    A modern, full-stack customer management platform built with <strong>Angular 19</strong>, <strong>Firebase</strong>, and <strong>OpenStreetMap</strong>.
+    <br />
+    Manage customers, verify identities, and geocode addresses — all for <strong>$0/month</strong>.
+  </p>
+</p>
 
-## What is this?
+<p align="center">
+  <a href="#-features">Features</a> •
+  <a href="#-tech-stack">Tech Stack</a> •
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-deployment">Deployment</a> •
+  <a href="#-contributing">Contributing</a>
+</p>
 
-A simple web application for capturing customer information. Try it [here](https://ng-node-firebase.herokuapp.com).
+---
 
-- Sign In: The app requires to user to sign in. Sign-in uses Firebase anonymous authentication, but can be easily switched to Firebase's authentication using Google, Facebook, Email, etc. An authentication token is sent to the backend with all calls and checked on the database.
+## ✨ Features
 
-- Add Customers: First name, last name, South Africa ID number (any 13 digit number), email (any valid email address), phone and address inputs are required. Address autocompletion is provided via the backend using Google Place API limited to South African address. The backend uses Google Maps API to augment the entered address with its formal version (e.g. including postal code) and geographic coordinates and then persists the data to Firebase. The backend also listens to data changes and updates an Elasticsearch index.
+| Category | What You Get |
+|----------|-------------|
+| **Authentication** | Email/password registration & login, password reset, session persistence, route guards |
+| **Customer CRUD** | Create, view, edit, and delete customers with full validation |
+| **Data Isolation** | Each user only sees their own customers — enforced at the database level |
+| **Address Autocomplete** | Free geocoding via OpenStreetMap Nominatim with coordinate extraction |
+| **ID Validation** | South African ID number validation (13-digit format) |
+| **Modern UI** | Angular Material 19 with responsive layout, loading states, toast notifications |
+| **Security** | Firestore rules, JWT auth, rate limiting, Helmet headers, CORS, XSS protection |
 
-- Find Customers: A simple search function is provided using a single input field. The input is used for prefix search on first name, last name, ID number and email, and match search on address and formal address. This means input 'Ge' will match customers with names starting with 'ge' but not with address '1 Main Street, George'; however input 'George' will also match this address.
+---
 
-- Find Customers using the API: more flexible searching is possible using the service directly. For example, [customers?$search=ge&$prefix=lastName](https://ng-node-firebase.herokuapp.com/api/v1/customers?$search=ge&$prefix=lastName) will limit the prefix search to last name, and [customers?$search=george&$prefix=firstName&$match=none](https://ng-node-firebase.herokuapp.com/api/v1/customers?$search=george&$prefix=firstName&$match=none) will limit the prefix search to first name and exclude match results (i.e. town 'George' will not match).
-
-> ### To Do
->
-> - Provide customer address map view
-> - Improve search by location
-> - Add further input validation in back- and frontend.
-
-## How does it work?
-
-An Angular front-end web application accesses a Firebase database via a Node Express.js backend service. The backend service uses Elasticsearch for search customers.
-
-### Backend API service
-
-> Try it:
->
-> - Get address suggestions for input '8 main': [ [https://ng-node-firebase.herokuapp.com/api/v1/_utils/autocomplete/address?input=8 main](https://ng-node-firebase.herokuapp.com/api/v1/_utils/autocomplete/address?input=8%20main).
-> - Search customers: [https://ng-node-firebase.herokuapp.com/api/v1/customers?$search=ja](https://ng-node-firebase.herokuapp.com/api/v1/customers?$search=ja).
->
-> API quick reference:
->
-> - $search=something : search for 'something' using standard settings.
-> - $search=something&$prefix=firstName,lastName : limit prefix search to first and last name only
-> - $search=something&prefix=none : don't use prefix search
-> - as above for $match
-> - the set of fields are: idNumber, firstName, lastName, email, phone, address, address_full.
-
-The Express.js server:
-
-- Listens to Firebase changes and updates an index on Elasticsearch.
-- Responds to requests at `/api`.
-- Checks that the user token sent with POST requests corresponds to a valid user in the database (i.e. that user is logged in).
-- Queries Elasticsearch and sends JSON result for valid requests like `/api/v1/customers?search=something`.
-- Queries Google Places API and sends JSON results for valid requests like `/api/v1/_utils/autocomplete/address?input=8 main`.
-
-### Frontend app
-
-> Try it:
->
-> [https://ng-node-firebase.herokuapp.com](https://ng-node-firebase.herokuapp.com)
-
-The Angular app lets user:
-
-- Log in anonymously to the database.
-- Find customers.
-- Add customers.
-
-## How to set it up?
-
-The Angular app (['frontend/'](frontend)) and Node.js service (['backend/'](backend)) are each their own npm project with their own scripts, so that they are easily separable. For convenience, they are bundled into this root ng-node-firebase npm project with its own scripts so that they can also easily be deployed together (e.g. to a single Heroku project). If they are run on different hosts or ports, the url for the backend service should be maintained in the Angular app (as `environment.dataService.url` in ['frontend/src/environments/'](frontend/src/environments)).
-
-### Firebase Database
-
-A Firebase project is required. You'll need to know the URL and Firebase Admin SDK service account private key of an existing one or create a new one. The private key and config object can be downloaded from the Firebase Console. Firebase is used in the Angular app to manage authentication, and in the Express server to check user authentication and to communicate with the database.
-
-- Backend: maintain environment variables `FIREBASE_URL` and `FIREBASE_KEY` for the Express server connection.
-- Frontend: maintain the `firebase` config variable in Angular environment in ['frontend/src/environments/'](frontend/src/environments):
+## 🏗️ Architecture
 
 ```
-firebase: {
-  apiKey: "...",
-  authDomain: "your-app.firebaseapp.com",
-  projectId: "your-app",
-}
+┌──────────────────────────────────────────────────────────────┐
+│                   Frontend  (Angular 19)                     │
+│  • Firebase SDK v11 (@angular/fire)                          │
+│  • Angular Material v19                                      │
+│  • Firestore real-time queries                               │
+│  • Leaflet + OpenStreetMap Nominatim (free geocoding)        │
+│  • Signals + RxJS 7 reactivity                               │
+└────────────────────────┬─────────────────────────────────────┘
+                         │ HTTPS
+┌────────────────────────▼─────────────────────────────────────┐
+│          Optional Backend  (Express + TypeScript)             │
+│  • Firebase Admin SDK     • Rate limiting                    │
+│  • Geocoding proxy        • Helmet + CORS                    │
+│  • Zod validation         • dotenv config                    │
+└──────────────────────────────────────────────────────────────┘
+                         │
+┌────────────────────────▼─────────────────────────────────────┐
+│                   Firebase (Spark — Free)                     │
+│  • Authentication (email/password)                           │
+│  • Cloud Firestore (NoSQL database)                          │
+│  • Hosting & Emulators                                       │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-### Heroku
+---
 
-The configured use of Elasticsearch is via Heroku (Bonsai), and the standard deployment option is to Heroku, so it's a good idea to create a Heroku app for this repo ("ng-node-firebase" used for convenience):
+## 💻 Tech Stack
 
-```
-$ heroku login
-Logged in as...
-$ cd ng-node-firebase
-$ heroku create ng-node-firebase
-Creating ⬢ ng-node-firebase... done
-https://ng-node-firebase.herokuapp.com/ | https://git.heroku.com/ng-node-firebase.git
-```
+### Frontend
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Angular | 19.x | SPA framework (standalone components) |
+| Angular Material | 19.x | UI component library |
+| Firebase SDK | 11.x | Auth & Firestore client |
+| Leaflet | 1.9.x | Interactive maps |
+| RxJS | 7.x | Reactive programming |
+| Zod | 3.x | Runtime schema validation |
+| TypeScript | 5.6 | Type safety |
 
-### Elasticsearch
+### Backend (Optional)
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Express.js | 4.21.x | HTTP framework |
+| Firebase Admin | 12.x | Server-side Firebase |
+| Helmet | 8.x | Security headers |
+| express-rate-limit | 7.x | API rate limiting |
+| Zod | 3.x | Input validation |
+| TypeScript | 5.6 | Type safety |
 
-An Elasticsearch server is required for searching customers. You'll need to know the full access url including credentials ("https://key:secret@host"). A cloud hosted Bonsai Elasticsearch deployment can be easily added to the Heroku app ("ng-node-firebase" used for convenience):
+---
 
-```
-$ cd ng-node-firebase
-$ heroku addons:create bonsai
-Created bonsai-concave-94445 as BONSAI_URL
-```
-
-For local development, set environment variable `BONSAI_URL`. Find the value on the created Heroku app's config variables or in the Elasticsearch instance.
-
-### Google Places API service
-
-The Google Place API service is used for address autocompletion. In the Google Cloud Platform console for the project, enable the Google Places API Web Service and get the server API key. Set the key as environment variable `GOOGLE_KEY`.
-
-## How to run it on Heroku
-
-### Manual command line deployment
-
-For the first deployment, environment variables need to be set (using 'ng-node-firebase' for convenience):
+## 📁 Project Structure
 
 ```
-heroku login
+ng-node-firebase/
+├── frontend-v2/                # Angular 19 frontend
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── components/
+│   │   │   │   ├── auth/       # Login & Register pages
+│   │   │   │   ├── customers/  # Customer list & form
+│   │   │   │   ├── layout/     # App layout, 404 page
+│   │   │   │   └── shared/     # Reusable components
+│   │   │   ├── services/       # Auth, Customer, Geocoding
+│   │   │   ├── models/         # TypeScript interfaces
+│   │   │   ├── guards/         # Route guards
+│   │   │   └── interceptors/   # HTTP interceptors
+│   │   └── environments/       # Firebase config (per env)
+│   └── package.json
+│
+├── backend-v2/                 # Express API (optional)
+│   └── src/
+│       ├── config/             # Firebase Admin init
+│       ├── middleware/          # Security middleware
+│       ├── services/           # Geocoding service
+│       ├── routes/             # API routes
+│       ├── models/             # Data models
+│       ├── validation/         # Zod schemas
+│       └── app.ts              # Entry point
+│
+├── firestore.rules             # Firestore security rules
+├── firestore.indexes.json      # Composite indexes
+├── firebase.json               # Firebase project config
+└── docs/                       # Additional documentation
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js 20+** — [download](https://nodejs.org/)
+- **Firebase account** — [sign up free](https://firebase.google.com/)
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/KaliYugaLabs/ng-node-firebase.git
 cd ng-node-firebase
-heroku config:set FIREBASE_URL=https://ng-node-firebase.firebaseio.com
-heroku config:set FIREBASE_KEY={"type": "service_account","project_id":... (Firebase Admin SDK service account private key JSON as single line)
-heroku config:set BONSAI_URL=https://key:secret@host (should have been set automatically during add-on creation)
-heroku config:set GOOGLE_KEY=(server API key for project on Google Cloud Platform)
+
+# Install frontend dependencies
+cd frontend-v2 && npm install
 ```
 
-Thereafter, each deployment simply needs:
+### 2. Firebase Setup
 
-```
-heroku login
-cd ng-node-firebase
-git push heroku master
-```
+1. Create a project at [Firebase Console](https://console.firebase.google.com/)
+2. Enable **Firestore Database** (production mode, `us-central`)
+3. Enable **Authentication → Email/Password** sign-in
+4. Register a **Web App** and copy the config object
 
-### Automatic deployment
+### 3. Configure Environment
 
-Just pull to `master` to deploy automatically once initial setup has been done.
+Edit `frontend-v2/src/environments/environment.ts`:
 
-For initial time setup:
-
-1. Connect Heroku app to a Heroku pipeline, connect pipeline to GitHub repo and enable automatic deployment.
-
-2. Set environment variables:
-
-```
-FIREBASE_URL=https://ng-node-firebase.firebaseio.com
-FIREBASE_KEY={"type": "service_account","project_id":... (Firebase Admin SDK service account private key JSON as single line)
-BONSAI_URL=https://key:secret@host (should have been set automatically during add-on creation)
-GOOGLE_KEY=(server API key for project on Google Cloud Platform)
-```
-
-## How to run it elsewhere or locally
-
-For running together, do the following in repo root; for standalone mode, do it in each of ['/backend'](backend/) and ['/frontend'](frontend/).
-
-1. Set environment variables:
-
-```
-FIREBASE_URL=https://ng-node-firebase.firebaseio.com
-FIREBASE_KEY={"type": "service_account","project_id":... (Firebase Admin SDK service account private key JSON as single line)
-BONSAI_URL=https://key:secret@host
-GOOGLE_KEY=(server API key for project on Google Cloud Platform)
-PORT=3000
+```typescript
+export const environment = {
+  production: false,
+  firebase: {
+    apiKey: 'YOUR_API_KEY',
+    authDomain: 'YOUR_PROJECT.firebaseapp.com',
+    projectId: 'YOUR_PROJECT_ID',
+    storageBucket: 'YOUR_PROJECT.appspot.com',
+    messagingSenderId: 'YOUR_SENDER_ID',
+    appId: 'YOUR_APP_ID'
+  },
+  apiUrl: 'http://localhost:3000/api/v1',
+  nominatimUrl: 'https://nominatim.openstreetmap.org'
+};
 ```
 
-2. Run `npm install`.
+### 4. Deploy Firestore Rules
 
-3. Run 'npm start'.
-
-## Setting environment variables
-
-For local development: in ['backend/.env'](backend/.env) (for standalone mode) and ['/.env'](.env) (for running together).
-
-For Heroku: in project console ('Settings -> Config Variables') or CLI ('ng-node-firebase' used for convenience):
-
+```bash
+# From project root
+firebase login
+firebase deploy --only firestore:rules
 ```
-heroku login
-cd ng-node-firebase
-heroku config:set VARIABLE=value
+
+### 5. Run
+
+```bash
+# From project root
+npm start
+# → opens http://localhost:4200
 ```
+
+### 6. Backend (Optional)
+
+Only needed to proxy geocoding requests:
+
+```bash
+cd backend-v2
+npm install
+cp .env.example .env
+# Edit .env with your Firebase service account JSON
+npm run dev
+```
+
+---
+
+## 📜 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start frontend dev server |
+| `npm run build` | Production build |
+| `npm run build:prod` | Optimized production build |
+| `npm test` | Run unit tests |
+| `npm run start:backend` | Start backend with hot reload |
+| `npm run emulators` | Start Firebase emulators |
+| `npm run deploy:all` | Deploy everything to Firebase |
+| `npm run deploy:rules` | Deploy Firestore rules only |
+| `npm run deploy:hosting` | Deploy hosting only |
+
+---
+
+## 💰 Cost Comparison
+
+| | Old Stack | New Stack |
+|-|-----------|-----------|
+| Maps | Google Maps API — $50-100/mo | OpenStreetMap — **$0** |
+| Database | Realtime DB — $0-20/mo | Firestore Spark — **$0** |
+| Search | Elasticsearch — $29-79/mo | Firestore queries — **$0** |
+| Auth | Firebase Auth — $0 | Firebase Auth — **$0** |
+| **Total** | **$79-199/mo** | **$0/mo** ✅ |
+
+> **Firebase Spark plan limits:** 1 GB storage, 50K reads/day, 20K writes/day, 50K MAUs — more than enough for small-to-medium apps.
+
+---
+
+## 🛡️ Security
+
+- **Firestore Rules** — document-level access control with data validation
+- **User Isolation** — users can only read/write their own customers
+- **JWT Authentication** — Firebase ID token verification
+- **Rate Limiting** — 100 requests per 15 minutes
+- **Security Headers** — Helmet.js with HSTS, XSS filter, content-type sniffing prevention
+- **CORS** — origin-restricted cross-origin requests
+- **Input Validation** — Zod schemas on both client and server
+
+---
+
+## 🚀 Deployment
+
+### Firebase Hosting (Recommended)
+
+```bash
+npm run build:prod
+npm run deploy:hosting
+```
+
+### Vercel (Frontend)
+
+```bash
+cd frontend-v2
+npx vercel
+```
+
+### Railway / Render (Backend)
+
+Push to GitHub → connect repo → add environment variables → deploy.
+
+---
+
+## 🐛 Troubleshooting
+
+| Error | Fix |
+|-------|-----|
+| `auth/invalid-api-key` | Check Firebase config values in `environment.ts` |
+| `Missing or insufficient permissions` | Verify Firestore rules are deployed and you're logged in |
+| Address autocomplete not working | Nominatim rate limit is 1 req/sec — wait and retry |
+| `Port 4200 already in use` | Run `npx kill-port 4200` or use `ng serve --port 4201` |
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch — `git checkout -b feature/awesome`
+3. Commit your changes — `git commit -m 'Add awesome feature'`
+4. Push to the branch — `git push origin feature/awesome`
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+MIT License — free for personal and commercial use.
+
+---
+
+## 🙏 Credits
+
+- Originally forked from [rikusv/ng-node-firebase](https://github.com/rikusv/ng-node-firebase)
+- Modernized to Angular 19 + Firebase v11 + Firestore
+- Free geocoding by [OpenStreetMap](https://www.openstreetmap.org/)
+
+---
+
+<p align="center"><strong>Built with ❤️ by <a href="https://github.com/KaliYugaLabs">KaliYugaLabs</a></strong></p>

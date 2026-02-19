@@ -1,0 +1,81 @@
+{
+  "name": "customer-manager-mcp",
+  "version": "2.0.0",
+  "description": "Firebase MCP Configuration for Customer Manager",
+  "firebase": {
+    "project": "ng-node-firebase",
+    "services": {
+      "auth": {
+        "enabled": true,
+        "providers": ["email/password"],
+        "settings": {
+          "allowSignup": true,
+          "requireEmailVerification": false
+        }
+      },
+      "firestore": {
+        "enabled": true,
+        "location": "us-central",
+        "rules": "firestore.rules",
+        "indexes": "firestore.indexes.json"
+      },
+      "hosting": {
+        "enabled": true,
+        "public": "frontend-v2/dist/customer-manager/browser",
+        "rewrites": [
+          {
+            "source": "**",
+            "destination": "/index.html"
+          }
+        ]
+      }
+    }
+  },
+  "collections": {
+    "users": {
+      "schema": {
+        "email": "string",
+        "displayName": "string",
+        "createdAt": "timestamp",
+        "role": "string"
+      },
+      "indexes": [
+        {
+          "fields": ["email"],
+          "unique": true
+        }
+      ]
+    },
+    "customers": {
+      "schema": {
+        "idNumber": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "email": "string",
+        "phone": "string|null",
+        "address": "string",
+        "formattedAddress": "string|null",
+        "latitude": "number|null",
+        "longitude": "number|null",
+        "createdBy": "string",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      },
+      "indexes": [
+        {
+          "fields": ["createdBy", "createdAt"],
+          "order": ["asc", "desc"]
+        },
+        {
+          "fields": ["idNumber"],
+          "unique": true
+        }
+      ]
+    }
+  },
+  "security": {
+    "firestoreRules": true,
+    "appCheck": false,
+    "enforceAppCheck": false
+  }
+}
