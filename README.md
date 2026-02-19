@@ -1,124 +1,136 @@
-<p align="center">
-  <h1 align="center">🏢 Customer Manager</h1>
-  <p align="center">
-    A modern, full-stack customer management platform built with <strong>Angular 19</strong>, <strong>Firebase</strong>, and <strong>OpenStreetMap</strong>.
-    <br />
-    Manage customers, verify identities, and geocode addresses — all for <strong>$0/month</strong>.
-  </p>
-</p>
+<div align="center">
 
-<p align="center">
-  <a href="#-features">Features</a> •
-  <a href="#-tech-stack">Tech Stack</a> •
-  <a href="#-quick-start">Quick Start</a> •
-  <a href="#-deployment">Deployment</a> •
-  <a href="#-contributing">Contributing</a>
-</p>
+<!-- Badges Row 1 — Tech Stack -->
+![Angular](https://img.shields.io/badge/Angular-19-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-11-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=for-the-badge&logo=node.js&logoColor=white)
+
+# 🔐 Customer Vault
+
+**A modern, secure customer management platform**
+*Built with Angular 19 · Firebase · OpenStreetMap*
+
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Visit_App-6366f1?style=for-the-badge)](https://customer-manager-aa404.web.app)
+[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-06b6d4?style=for-the-badge)](https://github.com/KaliYugaLabs/ng-node-firebase/pulls)
+
+---
+
+*Manage customers, verify identities, and geocode addresses — all for **$0/month**.*
+
+</div>
+
+---
+
+## 📸 Preview
+
+> **Coming soon** — screenshots of the live dashboard, customer form, and login page.
+
+<!-- Uncomment and replace with actual screenshots when available:
+<div align="center">
+<img src="docs/screenshots/dashboard.png" alt="Dashboard" width="80%">
+<br><br>
+<img src="docs/screenshots/login.png" alt="Login" width="45%">
+<img src="docs/screenshots/customer-form.png" alt="Customer Form" width="45%">
+</div>
+-->
 
 ---
 
 ## ✨ Features
 
-| Category | What You Get |
-|----------|-------------|
-| **Authentication** | Email/password registration & login, password reset, session persistence, route guards |
-| **Customer CRUD** | Create, view, edit, and delete customers with full validation |
-| **Data Isolation** | Each user only sees their own customers — enforced at the database level |
-| **Address Autocomplete** | Free geocoding via OpenStreetMap Nominatim with coordinate extraction |
-| **ID Validation** | South African ID number validation (13-digit format) |
-| **Modern UI** | Angular Material 19 with responsive layout, loading states, toast notifications |
-| **Security** | Firestore rules, JWT auth, rate limiting, Helmet headers, CORS, XSS protection |
+<table>
+<tr>
+<td width="50%">
+
+### 🔑 Authentication
+- Email/password registration & login
+- Password reset via email
+- Persistent sessions across tabs
+- Protected routes with Angular guards
+
+</td>
+<td width="50%">
+
+### 👥 Customer Management
+- Full CRUD operations
+- Real-time search & filtering
+- South African ID validation (13-digit)
+- Per-user data isolation
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🗺️ Address & Maps
+- OpenStreetMap address autocomplete
+- Automatic geocoding (lat/lng)
+- Leaflet interactive maps
+- Zero-cost — no API key needed
+
+</td>
+<td width="50%">
+
+### 🛡️ Security
+- Firestore rules with field validation
+- JWT token authentication
+- Rate limiting (100 req/15min)
+- Helmet.js, CORS, XSS protection
+
+</td>
+</tr>
+</table>
 
 ---
 
 ## 🏗️ Architecture
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                   Frontend  (Angular 19)                     │
-│  • Firebase SDK v11 (@angular/fire)                          │
-│  • Angular Material v19                                      │
-│  • Firestore real-time queries                               │
-│  • Leaflet + OpenStreetMap Nominatim (free geocoding)        │
-│  • Signals + RxJS 7 reactivity                               │
-└────────────────────────┬─────────────────────────────────────┘
-                         │ HTTPS
-┌────────────────────────▼─────────────────────────────────────┐
-│          Optional Backend  (Express + TypeScript)             │
-│  • Firebase Admin SDK     • Rate limiting                    │
-│  • Geocoding proxy        • Helmet + CORS                    │
-│  • Zod validation         • dotenv config                    │
-└──────────────────────────────────────────────────────────────┘
-                         │
-┌────────────────────────▼─────────────────────────────────────┐
-│                   Firebase (Spark — Free)                     │
-│  • Authentication (email/password)                           │
-│  • Cloud Firestore (NoSQL database)                          │
-│  • Hosting & Emulators                                       │
-└──────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Client["🖥️ Frontend — Angular 19"]
+        A[Angular Material UI] --> B[Firebase SDK v11]
+        A --> C[Leaflet Maps]
+        A --> D[Zod Validation]
+    end
+
+    subgraph Server["⚙️ Backend — Express + TypeScript"]
+        E[Firebase Admin SDK] --> F[Geocoding Proxy]
+        E --> G[Rate Limiter]
+        E --> H[Helmet + CORS]
+    end
+
+    subgraph Cloud["☁️ Firebase — Spark Plan (Free)"]
+        I[(Cloud Firestore)]
+        J[🔒 Authentication]
+        K[🌐 Hosting]
+    end
+
+    B -->|Auth & Queries| I
+    B -->|Sign In/Up| J
+    A -->|Optional API| Server
+    F -->|Nominatim| L[🗺️ OpenStreetMap]
+    Client -->|Deploy| K
 ```
 
 ---
 
 ## 💻 Tech Stack
 
-### Frontend
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Angular | 19.x | SPA framework (standalone components) |
-| Angular Material | 19.x | UI component library |
-| Firebase SDK | 11.x | Auth & Firestore client |
-| Leaflet | 1.9.x | Interactive maps |
-| RxJS | 7.x | Reactive programming |
-| Zod | 3.x | Runtime schema validation |
-| TypeScript | 5.6 | Type safety |
+<div align="center">
 
-### Backend (Optional)
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Express.js | 4.21.x | HTTP framework |
-| Firebase Admin | 12.x | Server-side Firebase |
-| Helmet | 8.x | Security headers |
-| express-rate-limit | 7.x | API rate limiting |
-| Zod | 3.x | Input validation |
-| TypeScript | 5.6 | Type safety |
+| Layer | Technology | Purpose |
+|:------|:-----------|:--------|
+| **Frontend** | Angular 19, Material 19 | SPA with standalone components & Signals |
+| **Database** | Cloud Firestore | Real-time NoSQL with offline support |
+| **Auth** | Firebase Auth | Email/password with session persistence |
+| **Maps** | Leaflet + Nominatim | Free interactive maps & geocoding |
+| **Validation** | Zod | Runtime schema validation (client + server) |
+| **Backend** | Express 4.21, TypeScript | Optional API with Firebase Admin SDK |
+| **Security** | Helmet, CORS, Rate Limit | Production-grade HTTP security |
 
----
-
-## 📁 Project Structure
-
-```
-ng-node-firebase/
-├── frontend-v2/                # Angular 19 frontend
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── components/
-│   │   │   │   ├── auth/       # Login & Register pages
-│   │   │   │   ├── customers/  # Customer list & form
-│   │   │   │   ├── layout/     # App layout, 404 page
-│   │   │   │   └── shared/     # Reusable components
-│   │   │   ├── services/       # Auth, Customer, Geocoding
-│   │   │   ├── models/         # TypeScript interfaces
-│   │   │   ├── guards/         # Route guards
-│   │   │   └── interceptors/   # HTTP interceptors
-│   │   └── environments/       # Firebase config (per env)
-│   └── package.json
-│
-├── backend-v2/                 # Express API (optional)
-│   └── src/
-│       ├── config/             # Firebase Admin init
-│       ├── middleware/          # Security middleware
-│       ├── services/           # Geocoding service
-│       ├── routes/             # API routes
-│       ├── models/             # Data models
-│       ├── validation/         # Zod schemas
-│       └── app.ts              # Entry point
-│
-├── firestore.rules             # Firestore security rules
-├── firestore.indexes.json      # Composite indexes
-├── firebase.json               # Firebase project config
-└── docs/                       # Additional documentation
-```
+</div>
 
 ---
 
@@ -126,29 +138,37 @@ ng-node-firebase/
 
 ### Prerequisites
 
-- **Node.js 20+** — [download](https://nodejs.org/)
-- **Firebase account** — [sign up free](https://firebase.google.com/)
+```
+Node.js 20+  ·  npm 10+  ·  Firebase Account (free)
+```
 
-### 1. Clone & Install
+### 1️⃣ Clone & Install
 
 ```bash
 git clone https://github.com/KaliYugaLabs/ng-node-firebase.git
 cd ng-node-firebase
-
-# Install frontend dependencies
 cd frontend-v2 && npm install
 ```
 
-### 2. Firebase Setup
+### 2️⃣ Firebase Setup
+
+<details>
+<summary><strong>Click to expand Firebase setup instructions</strong></summary>
 
 1. Create a project at [Firebase Console](https://console.firebase.google.com/)
-2. Enable **Firestore Database** (production mode, `us-central`)
-3. Enable **Authentication → Email/Password** sign-in
-4. Register a **Web App** and copy the config object
+2. Enable **Firestore Database** → Production mode → `us-central`
+3. Enable **Authentication** → Email/Password provider
+4. Register a **Web App** → copy the config object
+5. *(Optional)* Generate a **Service Account** key for the backend
 
-### 3. Configure Environment
+</details>
 
-Edit `frontend-v2/src/environments/environment.ts`:
+### 3️⃣ Configure
+
+```bash
+# Edit with your Firebase credentials
+code frontend-v2/src/environments/environment.ts
+```
 
 ```typescript
 export const environment = {
@@ -166,133 +186,169 @@ export const environment = {
 };
 ```
 
-### 4. Deploy Firestore Rules
+### 4️⃣ Run
 
 ```bash
-# From project root
+npm start
+# → http://localhost:4200
+```
+
+### 5️⃣ Deploy Firestore Rules
+
+```bash
 firebase login
 firebase deploy --only firestore:rules
 ```
 
-### 5. Run
-
-```bash
-# From project root
-npm start
-# → opens http://localhost:4200
-```
-
-### 6. Backend (Optional)
-
-Only needed to proxy geocoding requests:
+<details>
+<summary><strong>🔧 Backend Setup (Optional)</strong></summary>
 
 ```bash
 cd backend-v2
 npm install
 cp .env.example .env
-# Edit .env with your Firebase service account JSON
+# Add your Firebase service account JSON to .env
 npm run dev
+```
+
+</details>
+
+---
+
+## 📁 Project Structure
+
+```
+ng-node-firebase/
+│
+├── frontend-v2/                 # 🖥️  Angular 19 SPA
+│   └── src/
+│       ├── app/
+│       │   ├── components/
+│       │   │   ├── auth/        #     Login & Register
+│       │   │   ├── customers/   #     Customer list & form
+│       │   │   ├── layout/      #     Shell & 404
+│       │   │   └── shared/      #     Reusable components
+│       │   ├── services/        #     Auth, Customer, Geocoding
+│       │   ├── guards/          #     Route protection
+│       │   ├── interceptors/    #     HTTP middleware
+│       │   └── models/          #     TypeScript interfaces
+│       └── environments/        #     Config per environment
+│
+├── backend-v2/                  # ⚙️  Express API (optional)
+│   └── src/
+│       ├── config/              #     Firebase Admin init
+│       ├── middleware/          #     Security (Helmet, CORS)
+│       ├── routes/              #     API endpoints
+│       ├── services/            #     Geocoding proxy
+│       └── validation/          #     Zod schemas
+│
+├── firestore.rules              # 🔒  Security rules
+├── firestore.indexes.json       # 📇  Composite indexes
+├── firebase.json                # ⚙️  Firebase config
+└── docs/                        # 📚  Documentation
 ```
 
 ---
 
-## 📜 Available Scripts
+## 📜 Scripts
 
 | Command | Description |
-|---------|-------------|
-| `npm start` | Start frontend dev server |
-| `npm run build` | Production build |
+|:--------|:------------|
+| `npm start` | Launch dev server at `localhost:4200` |
 | `npm run build:prod` | Optimized production build |
 | `npm test` | Run unit tests |
-| `npm run start:backend` | Start backend with hot reload |
+| `npm run start:backend` | Start Express API with hot reload |
 | `npm run emulators` | Start Firebase emulators |
-| `npm run deploy:all` | Deploy everything to Firebase |
-| `npm run deploy:rules` | Deploy Firestore rules only |
-| `npm run deploy:hosting` | Deploy hosting only |
+| `npm run deploy:all` | Deploy to Firebase Hosting |
+| `npm run deploy:rules` | Deploy Firestore security rules |
 
 ---
 
 ## 💰 Cost Comparison
 
-| | Old Stack | New Stack |
-|-|-----------|-----------|
-| Maps | Google Maps API — $50-100/mo | OpenStreetMap — **$0** |
-| Database | Realtime DB — $0-20/mo | Firestore Spark — **$0** |
-| Search | Elasticsearch — $29-79/mo | Firestore queries — **$0** |
-| Auth | Firebase Auth — $0 | Firebase Auth — **$0** |
-| **Total** | **$79-199/mo** | **$0/mo** ✅ |
+<div align="center">
 
-> **Firebase Spark plan limits:** 1 GB storage, 50K reads/day, 20K writes/day, 50K MAUs — more than enough for small-to-medium apps.
+| | Before | After |
+|:-|:------:|:-----:|
+| **Maps** | Google Maps — $50-100/mo | OpenStreetMap — **$0** |
+| **Database** | Realtime DB — $0-20/mo | Firestore Spark — **$0** |
+| **Search** | Elasticsearch — $29-79/mo | Firestore Queries — **$0** |
+| **Auth** | Firebase — $0 | Firebase — **$0** |
+| **Total** | **$79-199/mo** | **✅ $0/mo** |
 
----
+</div>
 
-## 🛡️ Security
-
-- **Firestore Rules** — document-level access control with data validation
-- **User Isolation** — users can only read/write their own customers
-- **JWT Authentication** — Firebase ID token verification
-- **Rate Limiting** — 100 requests per 15 minutes
-- **Security Headers** — Helmet.js with HSTS, XSS filter, content-type sniffing prevention
-- **CORS** — origin-restricted cross-origin requests
-- **Input Validation** — Zod schemas on both client and server
+> **Spark plan limits:** 1 GB storage · 50K reads/day · 20K writes/day · 50K MAUs
 
 ---
 
 ## 🚀 Deployment
 
-### Firebase Hosting (Recommended)
-
-```bash
-npm run build:prod
-npm run deploy:hosting
-```
-
-### Vercel (Frontend)
-
-```bash
-cd frontend-v2
-npx vercel
-```
-
-### Railway / Render (Backend)
-
-Push to GitHub → connect repo → add environment variables → deploy.
+| Platform | Command |
+|:---------|:--------|
+| **Firebase Hosting** | `npm run build:prod && npm run deploy:hosting` |
+| **Vercel** | `cd frontend-v2 && npx vercel` |
+| **Netlify** | Connect repo → build: `npm run build` → publish: `dist/` |
+| **Backend (Railway)** | Push to GitHub → connect → add env vars → deploy |
 
 ---
 
 ## 🐛 Troubleshooting
 
-| Error | Fix |
-|-------|-----|
-| `auth/invalid-api-key` | Check Firebase config values in `environment.ts` |
-| `Missing or insufficient permissions` | Verify Firestore rules are deployed and you're logged in |
-| Address autocomplete not working | Nominatim rate limit is 1 req/sec — wait and retry |
-| `Port 4200 already in use` | Run `npx kill-port 4200` or use `ng serve --port 4201` |
+<details>
+<summary><code>auth/invalid-api-key</code></summary>
+
+Check Firebase config in `environment.ts` — make sure all values match your Firebase Console.
+</details>
+
+<details>
+<summary><code>Missing or insufficient permissions</code></summary>
+
+Deploy Firestore rules: `firebase deploy --only firestore:rules` and make sure you're logged in.
+</details>
+
+<details>
+<summary>Address autocomplete not working</summary>
+
+Nominatim has a 1 req/sec limit. Wait a moment and retry. Check browser console for errors.
+</details>
+
+<details>
+<summary>Port 4200 already in use</summary>
+
+```bash
+npx kill-port 4200
+# or
+ng serve --port 4201
+```
+</details>
 
 ---
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch — `git checkout -b feature/awesome`
-3. Commit your changes — `git commit -m 'Add awesome feature'`
-4. Push to the branch — `git push origin feature/awesome`
-5. Open a Pull Request
+1. **Fork** the repository
+2. **Create** a feature branch — `git checkout -b feature/awesome`
+3. **Commit** your changes — `git commit -m 'Add awesome feature'`
+4. **Push** — `git push origin feature/awesome`
+5. **Open** a Pull Request
 
 ---
 
 ## 📄 License
 
-MIT License — free for personal and commercial use.
+This project is licensed under the **MIT License** — free for personal and commercial use.
 
 ---
 
-## 🙏 Credits
+<div align="center">
 
-- Originally forked from [rikusv/ng-node-firebase](https://github.com/rikusv/ng-node-firebase)
-- Modernized to Angular 19 + Firebase v11 + Firestore
-- Free geocoding by [OpenStreetMap](https://www.openstreetmap.org/)
+### Built with ❤️ by [KaliYugaLabs](https://github.com/KaliYugaLabs)
 
----
+*Originally forked from [rikusv/ng-node-firebase](https://github.com/rikusv/ng-node-firebase) — modernized with Angular 19, Firebase v11, and free geocoding.*
 
-<p align="center"><strong>Built with ❤️ by <a href="https://github.com/KaliYugaLabs">KaliYugaLabs</a></strong></p>
+![Made with Angular](https://img.shields.io/badge/Made_with-Angular-DD0031?style=flat-square&logo=angular)
+![Powered by Firebase](https://img.shields.io/badge/Powered_by-Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black)
+![Maps by OpenStreetMap](https://img.shields.io/badge/Maps_by-OpenStreetMap-7EBC6F?style=flat-square&logo=openstreetmap&logoColor=white)
+
+</div>
